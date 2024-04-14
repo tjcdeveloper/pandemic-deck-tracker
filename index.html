@@ -6,49 +6,48 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Tauri App</title>
     <script type="module" src="/src/main.ts" defer></script>
-    <style>
-      .logo.vite:hover {
-        filter: drop-shadow(0 0 2em #747bff);
-      }
-
-      .logo.typescript:hover {
-        filter: drop-shadow(0 0 2em #2d79c7);
-      }
-    </style>
   </head>
-
   <body>
     <div class="container">
-      <h1>Welcome to Tauri!</h1>
+      <h1>Pandemic Legacy Season 2 - Infection Deck Card Tracker</h1>
 
-      <div class="row">
-        <a href="https://vitejs.dev" target="_blank">
-          <img src="/src/assets/vite.svg" class="logo vite" alt="Vite logo" />
-        </a>
-        <a href="https://tauri.app" target="_blank">
-          <img
-            src="/src/assets/tauri.svg"
-            class="logo tauri"
-            alt="Tauri logo"
-          />
-        </a>
-        <a href="https://www.typescriptlang.org/docs" target="_blank">
-          <img
-            src="/src/assets/typescript.svg"
-            class="logo typescript"
-            alt="typescript logo"
-          />
-        </a>
+      <p>
+        Keep track of what cards have been drawn, and after an epidemic what known cards are on the top of the deck.
+      </p>
+
+      <div class="ts-toggle">
+        <div>
+          <a href="#" data-alt-text="Hide instructions ▲" class="ts-toggle-btn">Show instructions ▼</a>
+        </div>
+        <main class="ts-toggle-content hidden">
+          <p>
+            Each time you draw a card from the deck click the button with the cities name on it. This will move it from the deck (taking from the known cards at the top of the deck first) into the discard pile.
+          </p>
+          <p>
+            When you draw an epidemic card click on the Epidemic button. This will ask you what card you drew during the infect step, take it from the unknowns and add it to the discards. It will then add all the discards back on top of the deck in the known cards section.
+          </p>
+        </main>
       </div>
 
-      <p>Click on the Tauri logo to learn more about the framework</p>
+      <div class="row card-columns">
+        <div id="ts-cards-unknown">
+          <h2>Unknown cards</h2>
+        </div>
+        <div id="ts-cards-known">
+          <h2>Known cards on top</h2>
+        </div>
+        <div id="ts-cards-discard">
+          <h2>Discard pile</h2>
+        </div>
+      </div>
 
-      <form class="row" id="greet-form">
-        <input id="greet-input" placeholder="Enter a name..." />
-        <button type="submit">Greet</button>
-      </form>
-
-      <p id="greet-msg"></p>
+      <div class="mt-3 flex-wrap">
+        <h2>Draw cards</h2>
+        <div class="row center-content">
+          <img src="/src/assets/epidemic-btn.png" alt="Epidemic Button" class="btn epidemic-btn" id="ts-epidemic-btn">
+        </div>
+        <div class="row" id="draw-buttons"></div>
+      </div>
     </div>
   </body>
 </html>
