@@ -118,6 +118,16 @@ button {
   height: auto;
   justify-content: center;
   white-space: nowrap;
+
+  &.btn-yellow {
+    background-color: hsl(59, 80%, 20%);
+    border-color: hsl(59, 84%, 26%);
+  }
+
+  &.btn-blue {
+    background-color: hsl(230, 80%, 20%);
+    border-color: hsl(230, 84%, 26%);
+  }
 }
 
 .ts-toggle-content {

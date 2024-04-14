@@ -1,10 +1,17 @@
 import {invoke} from "@tauri-apps/api/tauri";
 import bindToggles from "./toggle.ts";
 
+enum CardColour {
+    BLACK = "BLACK",
+    BLUE = "BLUE",
+    YELLOW = "YELLOW"
+}
+
 interface Card {
     id: number,
     card_name: string,
     number_of_copies: number,
+    colour: CardColour,
 }
 
 let deck: Array<Card> = [];
@@ -31,6 +38,7 @@ async function loadDeck(): Promise<void> {
                 if (a.card_name > b.card_name) return 1;
                 return 0;
             });
+            console.table(deck);
         })
         .catch(error => {
             console.error(error);
@@ -47,6 +55,7 @@ function drawAndBindButtons(): void {
     elBtn.classList.add('btn', 'draw-btn');
     deck.forEach(card => {
         const tBtn = cloneNode(elBtn);
+        tBtn.classList.add('btn-' + card.colour.toLowerCase())
         tBtn.innerText = card.card_name;
         tBtn.onclick = () => {
             moveCard(card.id);
