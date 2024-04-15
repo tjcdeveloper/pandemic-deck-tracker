@@ -1,11 +1,10 @@
 // Prevents additional console window on Windows in release, DO NOT REMOVE!!
 #![cfg_attr(not(debug_assertions), windows_subsystem = "windows")]
-use serde::{Serialize, Serializer};
-use serde::ser::SerializeStruct;
+use serde::Serialize;
 use std::fs::File;
 use std::str::FromStr;
 
-const DB_PATH: &str = "./database/db.sqlite";
+const DB_PATH: &str = "./db.sqlite";
 
 #[derive(Serialize)]
 enum CardColour {
