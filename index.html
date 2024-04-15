@@ -49,5 +49,20 @@
         <div class="row" id="draw-buttons"></div>
       </div>
     </div>
+    <div class="modal epidemic-modal" id="ts-epidemic-modal" data-modal-trigger-id="ts-epidemic-btn">
+      <section class="modal-content">
+        <header><img src="/src/assets/epidemic-btn.png" alt="Epidemic"></header>
+        <main>
+          <p>
+            <strong>Infect:</strong> draw a card from the bottom of the infect deck, select the city.
+          </p>
+          <fieldset class="epidemic-modal_cities" id="ts-epidemic-cities"></fieldset>
+        </main>
+        <footer>
+          <button class="btn btn-red modal-close">Cancel</button>
+          <button class="btn btn-green modal-ok" data-callback="doEpidemic">Draw</button>
+        </footer>
+      </section>
+    </div>
   </body>
 </html>

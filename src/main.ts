@@ -1,4 +1,5 @@
 import {invoke} from "@tauri-apps/api/tauri";
+import bindModals from "./modal.ts";
 import bindToggles from "./toggle.ts";
 
 enum CardColour {
@@ -38,11 +39,38 @@ async function loadDeck(): Promise<void> {
                 if (a.card_name > b.card_name) return 1;
                 return 0;
             });
-            console.table(deck);
         })
         .catch(error => {
             console.error(error);
         });
+}
+
+function addCitiesToEpidemicModal() {
+    const elField = document.querySelector<HTMLFieldSetElement>('#ts-epidemic-modal fieldset#ts-epidemic-cities');
+    if (elField === null) {
+        console.error("FATAL ERROR: Unable to find fieldset for epidemic modal radio buttons!");
+        return;
+    }
+
+    const elDiv = document.createElement('div');
+    elDiv.classList.add('epidemic-modal_city');
+    const elRadio = document.createElement('input');
+    elRadio.setAttribute('type', 'radio');
+    elRadio.name = 'epidemicCity';
+
+    deck.forEach(card => {
+        const tDiv = cloneNode(elDiv);
+        const tRadio = cloneNode(elRadio);
+        const tLabel = document.createElement('label');
+        tRadio.id = `ts-epidemic-radio-${card.id.toString()}`;
+        tLabel.innerText = card.card_name;
+        tLabel.setAttribute('for', tRadio.id);
+        tDiv.classList.add(card.colour.toLowerCase());
+        tDiv.append(tRadio, tLabel);
+
+        tRadio.value = card.id.toString();
+        elField.append(tDiv);
+    });
 }
 
 function drawAndBindButtons(): void {
@@ -124,12 +152,12 @@ function drawTable(): void {
     elDiscardCards.append(tRowD);
 }
 
-function moveCard(id: number): void {
+function moveCard(id: number, forceFromUnknownDeck = false): void {
     if (knownCards[id] === 0 && unknownCards[id] === 0) {
         return;
     }
 
-    knownCards[id] > 0 ? knownCards[id]-- : unknownCards[id]--;
+    (!forceFromUnknownDeck && knownCards[id] > 0) ? knownCards[id]-- : unknownCards[id]--;
     discardPile[id]++;
 }
 
@@ -164,6 +192,7 @@ function updateNumberInCell(col: string, id: number, num: number) {
 window.addEventListener("DOMContentLoaded", () => {
     loadDeck().then(() => {
         console.log("Deck loaded");
+        addCitiesToEpidemicModal();
         drawTable();
         drawAndBindButtons();
         updateCardNumbers();
@@ -179,5 +208,26 @@ window.addEventListener("DOMContentLoaded", () => {
     elKnownCards = elKn;
     elDiscardCards = elDi;
 
+    bindModals();
     bindToggles();
 });
+
+declare global {
+    interface Window { doEpidemic: Function }
+}
+window.doEpidemic = () => {
+    console.log("Doing epidemic");
+    const elCity = document.querySelector<HTMLInputElement>('#ts-epidemic-cities input:checked');
+    console.log(elCity);
+    if (elCity !== null) {
+        moveCard(Number(elCity.value), true);
+    }
+
+    discardPile.forEach((num, id) => {
+        console.log(`Moving ${num} for city ${id}`);
+        knownCards[id] += num;
+        discardPile[id] = 0;
+    });
+
+    updateCardNumbers();
+}
