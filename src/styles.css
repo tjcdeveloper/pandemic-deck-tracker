@@ -1,3 +1,5 @@
+@import "../node_modules/@fortawesome/fontawesome-free/css/all.min.css";
+
 :root {
   font-family: Inter, Avenir, Helvetica, Arial, sans-serif;
   font-size: 16px;
@@ -31,6 +33,14 @@
   width: 100%;
   flex-basis: 100%;
 
+  &.radios {
+    padding: .25em 0;
+  }
+
+  &:not(:last-child) {
+    margin-bottom: 1rem;
+  }
+
   & > .col-grow {
     flex-grow: 1;
   }
@@ -38,6 +48,9 @@
 
 .center-content {
   justify-content: center;
+}
+.right-content {
+  justify-content: right;
 }
 
 .flex-wrap {
@@ -47,6 +60,7 @@
 .card-columns > div {
   padding: 0 1rem;
   flex-grow: 1;
+  width: 33%;
 
   &:not(:last-child) {
     border-right: 1px solid #0f0f0f;
@@ -140,6 +154,11 @@ button {
   }
 }
 
+.action-icon {
+  cursor: pointer;
+  font-size: 1.5rem;
+}
+
 .ts-toggle-content {
   transition: all 300ms ease-out;
   transform-origin: top;
@@ -187,14 +206,14 @@ fieldset {
 
 /* MODAL */
 .modal {
-  position: absolute;
+  position: fixed;
   display: none;
   justify-content: center;
   align-items: center;
   top: 0;
   left: 0;
-  width: 100vw;
-  height: 100vh;
+  width: 100%;
+  height: 100%;
   background: rgba(0, 0, 0, 0.7);
   transition-property: display;
   transition: all 300ms ease-in-out;
@@ -204,7 +223,10 @@ fieldset {
   }
 
   & > .modal-content {
+    display: flex;
+    flex-direction: column;
     padding: 2rem 0;
+    max-height: calc(100vh - 8rem);
     width: 70%;
     background: #f6f6f6;
     border-radius: 1rem;
@@ -219,6 +241,7 @@ fieldset {
 
     & > main {
       padding: 1rem 2rem;
+      overflow-y: auto;
     }
 
     & > footer {
@@ -272,13 +295,68 @@ fieldset {
   }
 }
 
+input {
+  align-items: center;
+  appearance: none;
+  background-color: hsl(221, 14%, 100%);
+  border-color: hsl(221, 14%, 86%);
+  border-radius: .375rem;
+  border-style: solid;
+  border-width: 1px;
+  box-shadow: inset 0 .0625em .125em hsla(221, 14%, 4%, .5);
+  color: hsl(221, 14%, 21%);
+  display: inline-flex;
+  height: 1.75em;
+  line-height: 1.5;
+  margin: 0;
+  outline: none;
+  padding: calc(0.5em - 1px) calc(0.75em - 1px);
+  transition-duration: 300ms;
+  transition-property: background-color, border-color, box-shadow, color;
+
+  &:focus, &:active {
+    border-color: #61de2a;
+    box-shadow: 0 0 0 .1875em hsla(100, 100%, 60%);
+  }
+
+  &[type=checkbox], &[type=radio] {
+    accent-color: #61de2a;
+    appearance: auto;
+    border: initial;
+    box-shadow: none;
+    height: 2.1em;
+    padding: initial;
+    vertical-align: baseline;
+
+    &+label {
+      padding-left: 0.5rem;
+      height: 1.75em;
+    }
+  }
+}
+label {
+  align-items: center;
+  box-sizing: border-box;
+  cursor: pointer;
+  display: inline-flex;
+  height: 2.25em;
+  line-height: 1.5;
+  padding-right: 1rem;
+}
+span.radios-label {
+  align-items: center;
+  display: inline-flex;
+  height: 1.75em;
+  padding-right: 1rem;
+}
+
 @media (prefers-color-scheme: dark) {
   :root {
     color: #f6f6f6;
     background-color: #2f2f2f;
   }
 
-  a:hover {
+  a:hover, .action-icon:hover {
     color: #61de2a;
   }
 
@@ -302,13 +380,13 @@ fieldset {
     }
   }
 
-  input,
   button {
     color: #ffffff;
     background-color: #0f0f0f98;
-  }
-  button:active {
-    background-color: #0f0f0f69;
+
+    &:active {
+      background-color: #0f0f0f69;
+    }
   }
 
   .epidemic-btn {
