@@ -7,7 +7,7 @@ interface ModalArray {[index: string]: Modal}
 
 const modals: ModalArray = {};
 
-export default function bindModals() {
+export function bindModals() {
     document.querySelectorAll<HTMLDivElement>('.modal').forEach(modal => {
         const trigger = document.querySelector<HTMLElement>(`#${modal.dataset.modalTriggerId}`);
         if (trigger === null) return;
@@ -36,7 +36,7 @@ function openModal(id: string) {
     modals[id].modal.classList.add('open');
 }
 
-function closeModal(id: string, callback?: Function | null): void {
+export function closeModal(id: string, callback?: Function | null): void {
     modals[id].modal.classList.remove('open');
     if (typeof callback === 'function') {
         callback();

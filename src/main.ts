@@ -1,5 +1,5 @@
 import {invoke} from "@tauri-apps/api/tauri";
-import bindModals from "./modal.ts";
+import { bindModals, closeModal } from "./modal.ts";
 import bindToggles from "./toggle.ts";
 
 enum CardColour {
@@ -34,11 +34,7 @@ async function loadDeck(): Promise<void> {
     await invoke<string>("load_deck")
         .then(response => {
             deck = JSON.parse(response);
-            deck.sort((a: Card, b: Card) => {
-                if (a.card_name < b.card_name) return -1;
-                if (a.card_name > b.card_name) return 1;
-                return 0;
-            });
+            sortDeck();
         })
         .catch(error => {
             console.error(error);
@@ -51,6 +47,7 @@ function addCitiesToEpidemicModal() {
         console.error("FATAL ERROR: Unable to find fieldset for epidemic modal radio buttons!");
         return;
     }
+    elField.innerHTML = "";
 
     const elDiv = document.createElement('div');
     elDiv.classList.add('epidemic-modal_city');
@@ -73,12 +70,50 @@ function addCitiesToEpidemicModal() {
     });
 }
 
+function bindCreateCityBtn(): void {
+    const elBtn: HTMLButtonElement | null = document.querySelector('#ts-add-new-city');
+    if (elBtn === null) {
+        console.error("Couldn't find create city button.");
+        return;
+    }
+
+    elBtn.onclick = async () => {
+        const cardName = document.querySelector<HTMLInputElement>('input#new-city-name')?.value;
+        const numberOfCopies = Number(document.querySelector<HTMLInputElement>('input#new-city-num')?.value);
+        const colour = document.querySelector<HTMLInputElement>('input[name="newCityColour"]:checked')?.value;
+
+        // TODO: Display error message if field is missing
+        if (!cardName || !numberOfCopies || !colour) {
+            console.error("Missing required field value: ", cardName, numberOfCopies, colour);
+            return;
+        }
+
+        // TODO: show waiting spinner
+        await invoke<string>("create_city", { cardName, numberOfCopies, colour })
+            .then((response) => {
+                const card: Card = JSON.parse(response);
+                console.log(card);
+                deck.push(card);
+                sortDeck();
+                addCitiesToEpidemicModal();
+                drawTable();
+                drawAndBindButtons();
+                updateCardNumbers();
+                closeModal("ts-options-modal");
+            })
+            .catch(error => {
+                console.error(error);
+            });
+    }
+}
+
 function drawAndBindButtons(): void {
     const elDivBtns: HTMLDivElement | null = document.querySelector('#draw-buttons');
     if (elDivBtns === null) {
         console.error("FATAL ERROR: Unable to find container for buttons!");
         return;
     }
+    elDivBtns.innerHTML = "";
     const elBtn: HTMLButtonElement = document.createElement('button');
     elBtn.classList.add('btn', 'draw-btn');
     deck.forEach(card => {
@@ -94,6 +129,15 @@ function drawAndBindButtons(): void {
 }
 
 function drawTable(): void {
+    const elH2U = cloneNode(elUnknownCards.querySelector('h2') ?? document.createElement('h2'));
+    const elH2K = cloneNode(elKnownCards.querySelector('h2') ?? document.createElement('h2'));
+    const elH2D = cloneNode(elDiscardCards.querySelector('h2') ?? document.createElement('h2'));
+
+    elUnknownCards.innerHTML = elKnownCards.innerHTML = elDiscardCards.innerHTML = "";
+    elUnknownCards.append(elH2U);
+    elKnownCards.append(elH2K);
+    elDiscardCards.append(elH2D);
+
     const elRow = document.createElement('div');
     elRow.classList.add('row', 'card-row');
     const elDivName = document.createElement('div');
@@ -161,6 +205,14 @@ function moveCard(id: number, forceFromUnknownDeck = false): void {
     discardPile[id]++;
 }
 
+function sortDeck(): void {
+    deck.sort((a: Card, b: Card) => {
+        if (a.card_name < b.card_name) return -1;
+        if (a.card_name > b.card_name) return 1;
+        return 0;
+    });
+}
+
 function updateCardNumbers(): void {
     let totalU: number = 0;
     let totalK: number = 0;
@@ -209,6 +261,7 @@ window.addEventListener("DOMContentLoaded", () => {
     elDiscardCards = elDi;
 
     bindModals();
+    bindCreateCityBtn();
     bindToggles();
 });
 

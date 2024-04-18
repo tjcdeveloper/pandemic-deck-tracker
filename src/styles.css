@@ -78,6 +78,7 @@
     &:not(:last-child) {
       padding-bottom: 0.25rem;
       border-bottom: 1px solid #0f0f0f;
+      margin-bottom: 0;
     }
 
     &:hover {
@@ -304,7 +305,7 @@ input {
   border-style: solid;
   border-width: 1px;
   box-shadow: inset 0 .0625em .125em hsla(221, 14%, 4%, .5);
-  color: hsl(221, 14%, 21%);
+  color: hsl(221, 14%, 10%);
   display: inline-flex;
   height: 1.75em;
   line-height: 1.5;
@@ -378,6 +379,12 @@ span.radios-label {
         border-color: #666;
       }
     }
+  }
+
+  input[type=text], input[type=number] {
+    background-color: hsl(100, 4%, 16%);
+    border-color: hsl(100, 4%, 10%);
+    color: hsl(100, 1%, 90%);
   }
 
   button {
